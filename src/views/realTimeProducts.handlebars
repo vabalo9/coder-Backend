@@ -1,0 +1,107 @@
+
+<div class="real-time-div">
+
+<div class="div-title">
+<h2 class="title">Create Product</h2>
+<div class="div-form">
+<form id="myForm" class="form-register"  action="/form-products" method="post">
+     <input class="register" placeholder='title' type="text" name="title">
+    <br>
+     <input class="register" placeholder='description' type="text" name="description">
+    <br>
+     <input class="register" placeholder='Price' type="number" name="price">
+    <br>
+     <input class="register" placeholder='thumbnail' type="text" name="thumbnail">
+    <br>
+     <input class="register" placeholder='code' type="number" name="code">
+    <br>
+     <input class="register" placeholder='stock' type="number" name="stock">
+    <br>
+    <button class="boton-finalizador" type="submit">Enviar</button>
+</form>
+</div>
+</div>
+
+
+<div class="tamaño">
+    <div id="tbody">
+     <div>
+    <h2 class="title">Products</h2>
+{{#each products}}
+<div class='div-productos'>
+        <div class="title-description">
+            <h1 class="color titulo-producto-carrito">{{this.title}}</h1>
+    <img class='imagen-carrito' src={{this.thumbnail}} />
+            <p class='color descripcion-producto-carrito'>descripcion: {{this.description}}</p>
+        </div>
+    <div class='palabras-iconos'>
+        <div class='contenido-cart'>
+            <h1 class='color'>Cantidad: {{this.stock}}</h1>
+            <h1 class='color'>Precio: ${{this.price}}</h1>
+        </div>
+        <div class='botones-carrito'>
+        </div>
+    </div>
+</div>
+{{/each}}
+</div>
+    </div>
+    </div>
+    </div>
+
+<script src="socket.io/socket.io.js"></script>
+<script>
+
+     
+
+    document.getElementById('myForm').onsubmit = e => {
+        e.preventDefault();
+        const title = document.querySelector('input[name=title]').value;
+        const description = document.querySelector('input[name=description]').value;
+        const price = parseInt(document.querySelector('input[name=price]').value);
+        const thumbnail = document.querySelector('input[name=thumbnail]').value;
+        const code = parseInt(document.querySelector('input[name=code]').value);
+        const stock = parseInt(document.querySelector('input[name=stock]').value);
+
+        const product = { title, description, price, thumbnail, code, stock };
+        socket.emit('new-product', product);
+
+        socket.on("productos", data=>{
+            console.log(data)
+            const tbody=document.getElementById('tbody')
+            let html= '<div></div>'
+            data.forEach(e=>{
+
+            html+= `
+            <div>
+    
+
+<div class='div-carrito'>
+    <div class='palabras-iconos'>
+        <div class='contenido-cart'>
+            <h1 class='color'>Cantidad: ${e.stock}</h1>
+            <h1 class='color'>Precio: $${e.price}</h1>
+        </div>
+        <div class='botones-carrito'>
+        </div>
+    </div>
+        <div class="title-description">
+            <h1 class="color titulo-producto-carrito">${e.title}</h1>
+            <p class='color descripcion-producto-carrito'>descripcion: ${e.description}</p>
+        </div>
+    
+    <img class='imagen-carrito' src=${e.thumbnail} />
+</div>
+
+</div>
+            `
+            })
+            tbody.innerHTML=html
+        })
+
+
+        
+    };
+         const socket = io();
+   
+</script>
