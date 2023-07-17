@@ -90,7 +90,7 @@
   padding: 0;
     margin: 0;
     box-sizing: border-box;
-    background-color: var(--color-fondo);  
+    background-color: var(--color-fondo); 
   }
 
 
@@ -369,20 +369,7 @@
     justify-content: center;
    }
 
-   .bi-plus-lg {
-    background-color:var(--principal-bg-color);
-    font-size: 30px;
-   }
 
-   .bi-dash {
-    background-color:var(--principal-bg-color);
-    font-size: 30px;
-   }
-
-   .bi-trash {
-    background-color:var(--principal-bg-color);
-    font-size: 30px;
-   }
  
    .palabras-iconos {
     display: flex;
@@ -631,3 +618,18 @@ background-color: var(--principal-bg-color)!important;
  .tamaño{
   width: 50%;
  }
+
+
+.navbar, .navbar-expand-lg, .bg-body-tertiary, .container-fluid, .navbar-brand{
+  background-color: var(--principal-bg-color)!important;
+}
+
+.div-title{
+  padding: 50px;
+  color: var(--principal-bg-color);
+
+}
+
+h1, h2{
+  margin-bottom: 2rem;
+}
