@@ -7,7 +7,6 @@ const router = Router()
 
 router.post("/", async (req,res)=>{
     try{
-      console.log("no me dejes morir asi")
       await CartManager.newCart()
        res.send(await CartManager.newCart())
     }catch (err) {
