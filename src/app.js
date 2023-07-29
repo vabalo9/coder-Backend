@@ -7,10 +7,10 @@ import managerDB from "./routes/DB-Routes/managerDB.router.js"
 import handlebars from "express-handlebars"
 import viewsRouter from "./routes/views.router.js"
 import __dirname from './utils.js'
-import ProductManager from "./productManager.js"
 import mongoose from 'mongoose'
 import managerModel from './DAO/models/productsModels.js'
-const productManager = new ProductManager('product.json');
+import chatRouter from './routes/Chat/chat.router.js'
+import chatModel from './DAO/models/mesaggesModel.js'
 
 const app = express();
 app.use(express.urlencoded({extended:true}))
@@ -35,7 +35,18 @@ app.use("/api/carts/", cartRouter)
 app.use('/cartDB/', cartDB)
 app.use('/managerDB',managerDB )
 
-//codigo mongoose
+//chat
+
+app.use('/chat', chatRouter)
+
+
+
+const saveMessages = async (data) => {
+  const messageDoc = await chatModel.findOne();
+  messageDoc.messages.push({ user: data.user, message: data.mesagge });
+  await messageDoc.save();
+  return messageDoc;
+};
 
 mongoose.set( 'strictQuery', false)
 const URL="mongodb+srv://valentinabalo9:jD7JbCE69VsdI6Gl@cluster0.nx3owjr.mongodb.net/?retryWrites=true&w=majority"
@@ -61,6 +72,13 @@ io.on('connection', async socket=>{
   socket.emit("productos", products ) ;
   
 })
+
+  io.on('connection', socket=>{
+    socket.on('new', name=>console.log(`${name} se acaba de conectar`))
+    socket.on('mesagge', async data=>{
+       io.emit('logs', await saveMessages(data))
+    })
+    })
 
 httpServer.on('error', e=>console.error(e)) 
 
