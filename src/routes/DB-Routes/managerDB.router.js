@@ -56,7 +56,7 @@ router.get("/products", async (req,res)=>{
   router.delete("/products/:pid", async (req,res)=>{
     try{
       let id = req.params.pid
-      await managerModel.deleteOne({_id:id})
+       await managerModel.deleteOne({_id:id})
       res.json({status:'elemento eliminado'})
     }catch (err) {
       res.json(err);
