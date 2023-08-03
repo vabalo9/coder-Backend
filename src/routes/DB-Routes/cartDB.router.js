@@ -6,52 +6,108 @@ const router = Router()
 
 
 router.get('/', async (req, res) => {
-    // .lean().exec() para que handlebars reconozca el modelo
-    const carts = await cartsModel.find().lean().exec()
-    res.send(carts)
+  // .lean().exec() para que handlebars reconozca el modelo
+  const carts = await cartsModel.find().lean().exec()
+  res.send(carts)
 })
 
 
-router.post('/create', async (req,res)=>{
-    const carts = await cartsModel.find().lean().exec()
-    let ID;
-    carts.length === 0 ? ID = 1 : ID = carts[carts.length-1].id + 1;
-    const cart={id:ID, products:[]}
+router.post('/create', async (req, res) => {
+  const carts = await cartsModel.find().lean().exec()
+  let ID
+  carts.length === 0 ? ID = 1 : ID = carts[carts.length - 1].id + 1;
+  const cart = { id: ID, products: [] }
 
-    const cartGenerated=new cartsModel(cart)
-    await cartGenerated.save()
+  const cartGenerated = new cartsModel(cart)
+  await cartGenerated.save()
 
-    res.send(cartGenerated);
+  res.send(cartGenerated);
 })
 
-router.get("/:cid", async (req,res)=>{
-      let id=  Number(req.params.cid)
-      res.send( await cartsModel.findOne({id}))
-  
+router.get("/:cid", async (req, res) => {
+  let id = Number(req.params.cid)
+  res.send(await cartsModel.findOne({ id }))
+
 })
 
-router.post("/:cid/product/:pid", async (req,res)=>{
-    
-      let cart=  Number(req.params.cid)
-      let objectId=  Number(req.params.pid)
+router.post("/:cid/product/:pid", async (req, res) => {
 
-    const busquedaCarrito = await cartsModel.findOne({id:cart})
-    const busquedaProducto = busquedaCarrito.products.findIndex((el) => el.id === objectId);
-  
-    if (busquedaProducto === -1) {
-        busquedaCarrito.products.push({id:objectId, quantity: 1})
-      await cartsModel.updateOne({ id: cart }, { $set: { products: busquedaCarrito.products } })
-    } else {
-      busquedaCarrito.products[busquedaProducto] = {
-        id: objectId,
-        quantity: busquedaCarrito.products[busquedaProducto].quantity + 1
+  let cartId = req.params.cid
+  let objectId = req.params.pid
+
+  const busquedaCarrito = await cartsModel.findOne({ _id: cartId })
+  const busquedaProducto = busquedaCarrito.products.findIndex((el) => el.id === objectId);
+
+  if (busquedaProducto === -1) {
+    busquedaCarrito.products.push({ id: objectId, quantity: 1 })
+    await cartsModel.updateOne({ _id: cartId }, { $set: { products: busquedaCarrito.products } })
+  } else {
+    busquedaCarrito.products[busquedaProducto] = {
+      id: objectId,
+      quantity: busquedaCarrito.products[busquedaProducto].quantity + 1
+    };
+    await cartsModel.updateOne({ _id: cartId }, { $set: { products: busquedaCarrito.products } })
+  }
+
+  res.send(await cartsModel.findOne({ _id: cartId }))
+
+})
+
+router.delete("/:cid/products/:pid", async (req, res) => {
+  let cart = Number(req.params.cid)
+  let objectId = Number(req.params.pid)
+
+  const busquedaCarrito = await cartsModel.findOne({ id: cart })
+  const busquedaProducto = busquedaCarrito.products.findIndex((el) => el.id === objectId);
+
+  if (busquedaProducto != -1) {
+    await cartsModel.updateOne(
+      { id: cart },
+      { $pull: { products: { id: objectId } } }
+    );
+    res.send(await cartsModel.findOne({ id: cart }))
+  } else { res.send({ 'error': 'no se encontro el producto a eliminar' }) }
+
+})
+
+router.put("/:cid/products/:pid", async (req, res) => {
+  let cart = Number(req.params.cid)
+  let objectId = Number(req.params.pid)
+  let cantidad = req.body.cantidad
+
+  const busquedaCarrito = await cartsModel.findOne({ id: cart })
+  const busquedaProducto = busquedaCarrito.products.findIndex((el) => el.id === objectId);
+
+  if (busquedaProducto === -1) {
+    busquedaCarrito.products.push({ id: objectId, quantity: 1 })
+    await cartsModel.updateOne({ id: cart }, { $set: { products: busquedaCarrito.products } })
+  } else {
+    busquedaCarrito.products[busquedaProducto] = {
+      id: objectId,
+      quantity: busquedaCarrito.products[busquedaProducto].quantity = cantidad
     };
     await cartsModel.updateOne({ id: cart }, { $set: { products: busquedaCarrito.products } })
-    }
+  }
 
-    res.send( await cartsModel.findOne({id:cart}))
-  
+  res.send(await cartsModel.findOne({ id: cart }))
+
 })
+
+router.delete("/:cid", async (req, res) => {
+  let cart = Number(req.params.cid)
+  try {
+    await cartsModel.deleteOne({ id: cart })
+
+    res.send('carrito eliminado con exito')
+
+  } catch (err) {
+    res.json(err);
+  }
+
+
+})
+
+
 
 
 export default router

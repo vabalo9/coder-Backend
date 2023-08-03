@@ -1,7 +1,6 @@
 import express from "express"
 import {Server} from "socket.io"
 import managerRouter from "./routes/manager.router.js"
-import cartRouter from "./routes/cart.router.js"
 import cartDB from "./routes/DB-Routes/cartDB.router.js"
 import managerDB from "./routes/DB-Routes/managerDB.router.js"
 import handlebars from "express-handlebars"
@@ -16,7 +15,7 @@ const app = express();
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
 
-//configuracion express
+//configuracion handlebars
 app.engine('handlebars', handlebars.engine())
 app.set('views', __dirname + '/views')
 app.set('view engine', 'handlebars')
@@ -29,9 +28,9 @@ app.use('/', viewsRouter)
 
 // rutas fyle Sistem
 app.use('/api/products/', managerRouter)
-app.use("/api/carts/", cartRouter)
 
 //rutas mongo
+app.use("/api/carts/", cartDB)
 app.use('/cartDB/', cartDB)
 app.use('/managerDB',managerDB )
 
@@ -63,7 +62,6 @@ const io = new Server (httpServer)
 
 io.on('connection', async socket=>{
   socket.on('new-product', async data =>{
-    console.log(data)
     await managerModel.create( { title:data.title, description:data.description, price:data.price, thumbnail:data.thumbnail, code:data.code, stock:data.stock, status:true} )
   })
 

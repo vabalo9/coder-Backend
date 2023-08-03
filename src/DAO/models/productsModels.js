@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import mongoosePaginate from 'mongoose-paginate-v2'
 
 const userCollection= 'products'
 
@@ -14,6 +15,8 @@ const userSchema = new mongoose.Schema({
 })
 
 mongoose.set( 'strictQuery', false)
+
+userSchema.plugin(mongoosePaginate)
 
 const userProducts= mongoose.model(userCollection, userSchema)
 

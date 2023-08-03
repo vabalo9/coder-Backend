@@ -1,21 +1,39 @@
 import {Router} from "express"
+import managerModel from '../DAO/models/productsModels.js'
 
 import ProductManager from "../productManager.js";
 const productManager = new ProductManager('product.json');
+
 
 const router = Router()
 
 
 
 router.get("/products", async (req,res)=>{
+  const page = parseInt(req.query?.page || 1)
+  const limit = parseInt(req.query.limit || 10) 
+  let priceOrder = parseInt(req.query.price || 1) 
+  let marca = req.query.marca || false;
+  let query={}
+
+  if (marca){
+    query.marca=marca
+  }
     try{
-        const products = await productManager.getProducts();
-        const cantidad= req.query.limit
-        if (cantidad) {
-            let elementosBuscados = await products.slice(0,cantidad)
-            res.send(elementosBuscados)
-        }else{res.send(products)}
-        
+      
+         let products= await managerModel.paginate(query, {
+              page,
+              limit,
+              lean:true, //pasar a formato json
+              sort: { price: priceOrder },
+              customLabels: {
+                docs: 'payload'
+              }
+          })
+               products.status = "success";
+               products.prevLink = products.hasPrevPage ? `/api/products/products/?page=${products.prevPage}&limit=${limit}`: null
+               products.nextLink = products.hasNextPage ? `/api/products/products/?page=${products.nextPage}&limit=${limit}`: null
+      res.send( products)    
     }catch (err) {
         res.json(err);
         }

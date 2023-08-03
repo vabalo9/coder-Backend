@@ -1,27 +1,21 @@
-
-
-
-
-
-
 <div>
     <h2 class="title">Productos</h2>
-{{#each products}}
-<div class='div-carrito'>
-    <div class='palabras-iconos'>
-        <div class='contenido-cart'>
-            <h1 class='color'>Cantidad: {{this.stock}}</h1>
-            <h1 class='color'>Precio: ${{this.price}}</h1>
+    {{#each products}}
+    <div class='div-carrito'>
+        <div class='palabras-iconos'>
+            <div class='contenido-cart'>
+                <h1 class='color'>Cantidad: {{this.stock}}</h1>
+                <h1 class='color'>Precio: ${{this.price}}</h1>
+            </div>
+            <div class='botones-carrito'>
+            </div>
         </div>
-        <div class='botones-carrito'>
-        </div>
-    </div>
         <div class="title-description">
             <h1 class="color titulo-producto-carrito">{{this.title}}</h1>
             <p class='color descripcion-producto-carrito'>descripcion: {{this.description}}</p>
         </div>
-    <h1 class='color titulo-producto-carrito'>{{thsi.title}}</h1>
-    <img class='imagen-carrito' src={{this.thumbnail}} />
-</div>
-{{/each}}
+        <h1 class='color titulo-producto-carrito'>{{thsi.title}}</h1>
+        <img class='imagen-carrito' src={{this.thumbnail}} />
+    </div>
+    {{/each}}
 </div>

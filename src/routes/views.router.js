@@ -10,7 +10,8 @@ router.get('/', (req,res)=>{
 router.get('/home.handlebars', async (req,res)=>{
     const products = await managerModel.find().lean().exec();
     res.render('products', {products})
-})
+    console.log({products})
+  })
 
 router.get('/form-products', async (req,res)=>{
     res.render('form', {})
