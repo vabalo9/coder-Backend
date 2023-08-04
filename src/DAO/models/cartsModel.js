@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
     products:{
         type:[
             {
+                quantity:Number,
                 product:{
                     type: mongoose.Schema.Types.ObjectId,
                     ref: "products"
@@ -27,17 +28,3 @@ const cartsModel= mongoose.model(userCollection, userSchema)
 export default cartsModel
 
 
-// import mongoose from "mongoose";
-
-// const cartCollection= 'carts'
-
-// const userSchema = new mongoose.Schema({
-//     products:Array,
-    
-// })
-
-
-
-// const cartsModel= mongoose.model(cartCollection, userSchema)
-
-// export default cartsModel

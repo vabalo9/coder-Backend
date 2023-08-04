@@ -31,12 +31,10 @@ router.get("/:cid", async (req, res) => {
 })
 
 router.post("/:cid/product/:pid", async (req, res) => {
-
   let cartId = req.params.cid
   let objectId = req.params.pid
-
-  const busquedaCarrito = await cartsModel.findOne({ _id: cartId })
-  const busquedaProducto = busquedaCarrito.products.findIndex((el) => el.id === objectId);
+   const busquedaCarrito = await cartsModel.findOne({ _id: cartId })
+   const busquedaProducto = busquedaCarrito.products.findIndex((el) => el.id === objectId);
 
   if (busquedaProducto === -1) {
     busquedaCarrito.products.push({ id: objectId, quantity: 1 })
@@ -49,47 +47,49 @@ router.post("/:cid/product/:pid", async (req, res) => {
     await cartsModel.updateOne({ _id: cartId }, { $set: { products: busquedaCarrito.products } })
   }
 
-  res.send(await cartsModel.findOne({ _id: cartId }))
+   res.send(await cartsModel.findOne({ _id: cartId }))
 
 })
 
-router.delete("/:cid/products/:pid", async (req, res) => {
-  let cart = Number(req.params.cid)
-  let objectId = Number(req.params.pid)
 
-  const busquedaCarrito = await cartsModel.findOne({ id: cart })
-  const busquedaProducto = busquedaCarrito.products.findIndex((el) => el.id === objectId);
+router.delete("/:cid/products/:pid", async (req, res) => {
+  let cartId = req.params.cid
+  let objectId = req.params.pid
+   const busquedaCarrito = await cartsModel.findOne({ _id: cartId })
+   const busquedaProducto = busquedaCarrito.products.findIndex((el) => el.id === objectId);
+  console.log(busquedaProducto)
+
 
   if (busquedaProducto != -1) {
     await cartsModel.updateOne(
-      { id: cart },
-      { $pull: { products: { id: objectId } } }
+      { _id: cartId }, 
+      { $pull: { products: { _id: objectId } } }
     );
-    res.send(await cartsModel.findOne({ id: cart }))
+    res.send(await cartsModel.findOne({ _id: cartId }))
   } else { res.send({ 'error': 'no se encontro el producto a eliminar' }) }
 
 })
 
 router.put("/:cid/products/:pid", async (req, res) => {
-  let cart = Number(req.params.cid)
-  let objectId = Number(req.params.pid)
-  let cantidad = req.body.cantidad
+  let cartId = req.params.cid
+  let objectId = req.params.pid
+   const busquedaCarrito = await cartsModel.findOne({ _id: cartId })
+   const busquedaProducto = busquedaCarrito.products.findIndex((el) => el.id === objectId);
+   let cantidad = req.body.cantidad
 
-  const busquedaCarrito = await cartsModel.findOne({ id: cart })
-  const busquedaProducto = busquedaCarrito.products.findIndex((el) => el.id === objectId);
 
   if (busquedaProducto === -1) {
-    busquedaCarrito.products.push({ id: objectId, quantity: 1 })
-    await cartsModel.updateOne({ id: cart }, { $set: { products: busquedaCarrito.products } })
+    busquedaCarrito.products.push({ _id: objectId, quantity: 1 })
+    await cartsModel.updateOne({ _id: cartId }, { $set: { products: busquedaCarrito.products } })
   } else {
     busquedaCarrito.products[busquedaProducto] = {
-      id: objectId,
+      _id: objectId,
       quantity: busquedaCarrito.products[busquedaProducto].quantity = cantidad
     };
-    await cartsModel.updateOne({ id: cart }, { $set: { products: busquedaCarrito.products } })
+    await cartsModel.updateOne({ _id: cartId }, { $set: { products: busquedaCarrito.products } })
   }
 
-  res.send(await cartsModel.findOne({ id: cart }))
+  res.send(await cartsModel.findOne({ _id: cartId }))
 
 })
 
@@ -103,8 +103,6 @@ router.delete("/:cid", async (req, res) => {
   } catch (err) {
     res.json(err);
   }
-
-
 })
 
 
