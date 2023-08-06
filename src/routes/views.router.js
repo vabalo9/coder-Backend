@@ -1,5 +1,6 @@
 import { Router } from "express";
 import managerModel from '../DAO/models/productsModels.js'
+import cartsModel from '../DAO/models/cartsModel.js'
 
 const router = Router()
 
@@ -28,8 +29,7 @@ router.get('/products', async (req, res) => {
         })
         products.prevLink = products.hasPrevPage ? `/api/products/products/?page=${products.prevPage}&limit=${limit}` : null
         products.nextLink = products.hasNextPage ? `/api/products/products/?page=${products.nextPage}&limit=${limit}` : null
-        console.log(products)
-        res.render('market', products)
+         res.render('market', products)
     } catch (err) {
         res.json(err);
     }
@@ -40,7 +40,6 @@ router.get('/products', async (req, res) => {
 router.get('/home.handlebars', async (req, res) => {
     const products = await managerModel.find().lean().exec();
     res.render('products', { products })
-    console.log({ products })
 })
 
 router.get('/form-products', async (req, res) => {
@@ -58,6 +57,17 @@ router.post('/form-products', async (req, res) => {
     res.redirect('/home.handlebars')
 })
 
+router.get('/carts/:cid', async (req,res)=>{
+    let cartId = req.params.cid
+    const busquedaCarrito = await cartsModel.findOne({ _id: cartId }).lean().exec();
+    console.log(JSON.stringify(busquedaCarrito))
+     res.render('cart', {busquedaCarrito})
+    // res.send(busquedaCarrito)
+})
+
+router.get('/vacio', (req,res)=>{
+    res.render('carritovacio', {})
+})
 
 
 

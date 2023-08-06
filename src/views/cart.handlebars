@@ -1,0 +1,29 @@
+<div>
+    <h1 class='titulo-carrito'>Tus productos</h1>
+
+
+
+
+        {{#each busquedaCarrito.products}}
+    <div class='div-carrito'>
+        <div class='palabras-iconos'>
+            <div class='contenido-cart'>
+                <h1 class='color'>Cantidad: {{{this.quantity}}}</h1>
+                <h1 class='color'>Precio por unidad: $ {{{_id.price}}} </h1>
+
+            </div>
+            <div class='botones-carrito'>
+                
+            </div>
+        </div>
+        <h1 class='color titulo-producto-carrito'>{{{_id.title}}}</h1>
+        <img className='imagen-carrito' src='' />
+    </div>
+    {{/each}}
+
+    <div class='totales'>
+        
+    </div>
+
+</div>
+

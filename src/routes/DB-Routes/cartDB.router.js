@@ -30,14 +30,15 @@ router.get("/:cid", async (req, res) => {
 
 })
 
+//para agregar una unidad mas por la ruta
 router.post("/:cid/product/:pid", async (req, res) => {
   let cartId = req.params.cid
   let objectId = req.params.pid
    const busquedaCarrito = await cartsModel.findOne({ _id: cartId })
-   const busquedaProducto = busquedaCarrito.products.findIndex((el) => el.id === objectId);
+  const busquedaProducto = busquedaCarrito.products.findIndex((el) => el._id._id == objectId);
 
   if (busquedaProducto === -1) {
-    busquedaCarrito.products.push({ id: objectId, quantity: 1 })
+    busquedaCarrito.products.push({ _id: objectId, quantity: 1 })
     await cartsModel.updateOne({ _id: cartId }, { $set: { products: busquedaCarrito.products } })
   } else {
     busquedaCarrito.products[busquedaProducto] = {
