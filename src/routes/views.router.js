@@ -11,7 +11,7 @@ router.get('/', (req, res) => {
 router.get('/products', async (req, res) => {
 
     const page = parseInt(req.query?.page || 1)
-    const limit = parseInt(req.query.limit || 10)
+    const limit = parseInt(req.query.limit || 3)
     let priceOrder = parseInt(req.query.price || 1)
     let marca = req.query.marca || false;
     let query = {}
@@ -27,8 +27,8 @@ router.get('/products', async (req, res) => {
             lean: true, //pasar a formato json
 
         })
-        products.prevLink = products.hasPrevPage ? `/api/products/products/?page=${products.prevPage}&limit=${limit}` : null
-        products.nextLink = products.hasNextPage ? `/api/products/products/?page=${products.nextPage}&limit=${limit}` : null
+        products.prevLink = products.hasPrevPage ? `/products/?page=${products.prevPage}&limit=${limit}` : null
+        products.nextLink = products.hasNextPage ? `/products/?page=${products.nextPage}&limit=${limit}` : null
          res.render('market', products)
     } catch (err) {
         res.json(err);

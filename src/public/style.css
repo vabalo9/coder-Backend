@@ -647,3 +647,15 @@ h1, h2{
 .clase {
 color: white;
 }
+
+.enlacesPaginaciones{
+  padding-top: 40px;
+  padding-bottom: 40px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.enlacePaginacion{
+  text-decoration: underline;
+  color: white;
+}
