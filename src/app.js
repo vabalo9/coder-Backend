@@ -1,15 +1,22 @@
+//librerias
 import express from "express"
+import session from 'express-session'
 import {Server} from "socket.io"
+import handlebars from "express-handlebars"
+import mongoose from 'mongoose'
+import MongoStore from 'connect-mongo'
+
+import __dirname from './utils.js'
+
+//enrutamientos
 import managerRouter from "./routes/manager.router.js"
 import cartDB from "./routes/DB-Routes/cartDB.router.js"
 import managerDB from "./routes/DB-Routes/managerDB.router.js"
-import handlebars from "express-handlebars"
 import viewsRouter from "./routes/views.router.js"
-import __dirname from './utils.js'
-import mongoose from 'mongoose'
 import managerModel from './DAO/models/productsModels.js'
 import chatRouter from './routes/Chat/chat.router.js'
 import chatModel from './DAO/models/mesaggesModel.js'
+import sessionRouter from './routes/session.router.js'
 
 const app = express();
 app.use(express.urlencoded({extended:true}))
@@ -19,6 +26,28 @@ app.use(express.json())
 app.engine('handlebars', handlebars.engine())
 app.set('views', __dirname + '/views')
 app.set('view engine', 'handlebars')
+
+mongoose.set( 'strictQuery', false)
+const URL="mongodb+srv://valentinabalo9:jD7JbCE69VsdI6Gl@cluster0.nx3owjr.mongodb.net/?retryWrites=true&w=majority"
+const dbName='login-proyect'
+
+//config mongo session
+app.use(session({
+  store:MongoStore.create({
+      mongoUrl:URL,
+      dbName,
+      mongoOptions: {
+          useNewUrlParser:true,
+          useUnifiedTopology:true
+      },
+      ttl:100
+  }),
+  secret:'secret',
+  resave:true,
+  saveUninitialized:true
+}))
+
+
 
 //archivos publicos
 app.use('/static', express.static(__dirname + '/public'))
@@ -35,8 +64,11 @@ app.use('/cartDB/', cartDB)
 app.use('/managerDB',managerDB )
 
 //chat
-
 app.use('/chat', chatRouter)
+
+//sesion
+app.use('/api/session', sessionRouter)
+
 
 
 
@@ -47,8 +79,6 @@ const saveMessages = async (data) => {
   return messageDoc;
 };
 
-mongoose.set( 'strictQuery', false)
-const URL="mongodb+srv://valentinabalo9:jD7JbCE69VsdI6Gl@cluster0.nx3owjr.mongodb.net/?retryWrites=true&w=majority"
 
 mongoose.connect(URL, {
     dbName: 'ecoomerce-CoderHouseProyect'

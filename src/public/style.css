@@ -601,7 +601,7 @@ background-color: var(--principal-bg-color)!important;
   padding-top: 50px;
   display: flex;
   justify-content: center;
-  color: var(--principal-bg-color);
+  color: white;
   font-size: 70px;
 }
 
@@ -659,3 +659,50 @@ color: white;
   text-decoration: underline;
   color: white;
 }
+
+.bi-person-circle{
+  background-color: var(--principal-bg-color);
+    font-size: 70px;
+    color: white;
+    border-top: none;
+    border-bottom: none;
+    padding-block: 20px;
+}
+
+.btns-sesion {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.bienvenida {
+  color: white;
+  margin: 0;
+  padding: 50px;
+  font-size: 60px;
+}
+
+.div-profile{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding-inline:600px;
+  padding-top: 40px;
+}
+
+.profile {
+  color: white;
+}
+
+.padding {
+  margin-top: 30px;
+}
+
+.enlace-finalizador {
+  font-size: 25px;
+  color:var(--principal-bg-color) ;
+  text-decoration: none;
+
+ }

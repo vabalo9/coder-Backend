@@ -58,7 +58,6 @@ router.delete("/:cid/products/:pid", async (req, res) => {
   let objectId = req.params.pid
    const busquedaCarrito = await cartsModel.findOne({ _id: cartId })
    const busquedaProducto = busquedaCarrito.products.findIndex((el) => el.id === objectId);
-  console.log(busquedaProducto)
 
 
   if (busquedaProducto != -1) {
