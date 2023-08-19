@@ -17,6 +17,8 @@ import managerModel from './DAO/models/productsModels.js'
 import chatRouter from './routes/Chat/chat.router.js'
 import chatModel from './DAO/models/mesaggesModel.js'
 import sessionRouter from './routes/session.router.js'
+import initializePassport from "./config/passport.config.js"
+import passport from "passport"
 
 const app = express();
 app.use(express.urlencoded({extended:true}))
@@ -26,6 +28,8 @@ app.use(express.json())
 app.engine('handlebars', handlebars.engine())
 app.set('views', __dirname + '/views')
 app.set('view engine', 'handlebars')
+
+
 
 mongoose.set( 'strictQuery', false)
 const URL="mongodb+srv://valentinabalo9:jD7JbCE69VsdI6Gl@cluster0.nx3owjr.mongodb.net/?retryWrites=true&w=majority"
@@ -47,7 +51,9 @@ app.use(session({
   saveUninitialized:true
 }))
 
-
+//configuracion passport
+initializePassport()
+app.use(passport.session())
 
 //archivos publicos
 app.use('/static', express.static(__dirname + '/public'))
