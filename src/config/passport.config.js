@@ -48,7 +48,7 @@ const initializePassport =()=>{
             usernameField:'email'
         },
         async(req,username,password,done)=>{
-            const {name,email}= req.body
+            const {first_name,email,last_name,age}= req.body
             try{
                 const user = await userModel.findOne({email:username})
                 if (user) {
@@ -57,8 +57,10 @@ const initializePassport =()=>{
                 }
 
                 const newUser = {
-                        name,
+                        first_name,
+                        last_name,
                         email,
+                        age,
                         password : createHash(password)
                 }
                 const result = await userModel.create(newUser)
