@@ -706,3 +706,9 @@ color: white;
   text-decoration: none;
 
  }
+
+ .btn-enlace {
+  display: flex;
+  justify-content: center;
+  text-decoration: none;
+ }

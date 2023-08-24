@@ -29,7 +29,7 @@ const initializePassport =()=>{
                 }
 
                 const newUser={
-                    name:profile._json.login,
+                    first_name:profile._json.login,
                     email,
                     password:''
                 }
