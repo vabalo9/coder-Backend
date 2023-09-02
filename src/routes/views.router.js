@@ -62,6 +62,7 @@ router.get('/', auth, (req, res) => {
 })
 
 router.get('/products', auth, async (req, res) => {
+    console.log('este es el usuario: '+req.user.cartId)
 
     const page = parseInt(req.query?.page || 1)
     const limit = parseInt(req.query.limit || 3)
@@ -82,7 +83,10 @@ router.get('/products', auth, async (req, res) => {
         })
         products.prevLink = products.hasPrevPage ? `/products/?page=${products.prevPage}&limit=${limit}` : null
         products.nextLink = products.hasNextPage ? `/products/?page=${products.nextPage}&limit=${limit}` : null
-         res.render('market', products)
+         res.render('market', {
+            products,
+            cartId:req.user.cartId._id
+        } )
     } catch (err) {
         res.json(err);
     }
@@ -116,10 +120,13 @@ router.post('/form-products', auth, async (req, res) => {
     res.redirect('/home.handlebars')
 })
 
-router.get('/carts/:cid', auth, async (req,res)=>{
-    let cartId = req.params.cid
+router.get('/carts', auth, async (req,res)=>{
+    let cartId = req.user.cartId
     const busquedaCarrito = await cartsModel.findOne({ _id: cartId }).lean().exec();
-    console.log(JSON.stringify(busquedaCarrito))
+    //console.log(JSON.stringify(busquedaCarrito))
+    if (busquedaCarrito.products.length == 0) return res.render('carritovacio', {})
+        
+    
      res.render('cart', {busquedaCarrito})
 })
 

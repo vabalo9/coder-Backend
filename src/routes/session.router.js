@@ -6,7 +6,6 @@ import {createHash, isValidPassword} from '../utils.js'
 const router = Router()
 
 
-
 router.post('/login', (req, res, next) => {
     passport.authenticate('login', (err, user) => {
         if (err) {
@@ -50,10 +49,40 @@ router.get(
     async(req, res) => {
         console.log('Callback: ', req.user)
         req.session.user = req.user
-        console.log(req.session)
+        console.log('console: '+req.session)
         res.redirect('/profile')
     }
 )
+
+
+
+router.post('/current', (req, res, next) => {
+    const email = req.headers.email;
+    const password = req.headers.password;
+
+    if (!email || !password) {
+        return res.status(400).json({ error: "Ingrese email y contraseña." });
+    }
+
+    // Adjuntamos el email y la contraseña al body para que passport pueda usarlos
+    req.body.email = email;
+    req.body.password = password;
+
+    passport.authenticate('login', (err, user, info) => {
+        if (err) {
+            return next(err); 
+        }
+
+        if (!user) {
+            return res.status(401).json({ error: info.message || "Authentication failed." });
+        }
+
+        
+        return res.json(user);
+
+    })(req, res, next);
+});
+
 
 
 export default router

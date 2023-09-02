@@ -1,9 +1,13 @@
 import { Router } from "express";
 import cartsModel from '../../DAO/models/cartsModel.js'
+import userModel from "../../DAO/models/user.model.js";
 
 const router = Router()
 
-
+router.get('/users', async (req, res) => {
+  const users = await userModel.find().lean().exec()
+  res.send(users)
+})
 
 router.get('/', async (req, res) => {
   // .lean().exec() para que handlebars reconozca el modelo
@@ -104,6 +108,19 @@ router.delete("/:cid", async (req, res) => {
     res.json(err);
   }
 })
+
+router.delete("/", async (req, res) => {
+  try {
+      // Elimina todos los documentos de la colección
+      await cartsModel.deleteMany({});
+      res.send('Todos los carritos han sido eliminados con éxito');
+  } catch (err) {
+      res.json(err);
+  }
+});
+
+
+
 
 
 

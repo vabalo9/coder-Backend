@@ -1,7 +1,6 @@
 <h3>aca es donde se compran los productos</h3>
-
 <div class="container-products">
-{{#each docs}}
+{{#each products.docs}}
 
 
 <div class="card" style="width: 18rem;">
@@ -17,12 +16,15 @@
 </div>
 
 <div class="enlacesPaginaciones">
-  {{#if hasPrevPage}}
-    <a class="enlacePaginacion" href="{{prevLink}}">Pagina anterior</a>
+  {{#if products.hasPrevPage}}
+    <a class="enlacePaginacion" href="{{products.prevLink}}">Pagina anterior</a>
     {{/if}}
-    {{#if hasNextPage}}
-    <a class="enlacePaginacion" href="{{nextLink}}">Pagina siguiente</a>
+    {{#if products.hasNextPage}}
+    <a class="enlacePaginacion" href="{{products.nextLink}}">Pagina siguiente</a>
     {{/if}}
 </div>
+
+<input type="hidden" id="cartId" value="{{cartId}}">
+
 
 <script src="/static/js/market.js"></script>

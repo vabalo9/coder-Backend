@@ -3,6 +3,19 @@ import local from 'passport-local'
 import userModel from "../DAO/models/user.model.js";
 import GitHubStrategy from 'passport-github2'
 import { createHash, isValidPassword } from "../utils.js";
+import cartsModel from '../DAO/models/cartsModel.js'
+
+const  newCart  = async()=> {
+const carts = await cartsModel.find().lean().exec()
+  let ID
+  carts.length === 0 ? ID = 1 : ID = carts[carts.length - 1].id + 1;
+  const cart = { id: ID, products: [] }
+
+  const cartGenerated = new cartsModel(cart)
+  await cartGenerated.save()
+
+  return (cartGenerated);
+}
 
 // App ID: 378060
 
@@ -21,6 +34,7 @@ const initializePassport =()=>{
         },
         async (accesToken, refreshToken, profile,done)=>{
             const email= profile._json.email
+            const cartIdResult = await newCart();
             try{
                 const user = await userModel.findOne({email})
                 if(user){
@@ -31,7 +45,8 @@ const initializePassport =()=>{
                 const newUser={
                     first_name:profile._json.login,
                     email,
-                    password:''
+                    password:'',
+                    cartId:cartIdResult._id
                 }
                 const result = await userModel.create(newUser)
                 return done(null,result)
@@ -55,15 +70,17 @@ const initializePassport =()=>{
                     console.log('este usuario ya existe')
                     return done(null,false)
                 }
-
-                const newUser = {
+                const cartIdResult = await newCart();
+                const newUser= {
                         first_name,
                         last_name,
                         email,
                         age,
-                        password : createHash(password)
+                        password : createHash(password),
+                        cartId:cartIdResult._id
                 }
                 const result = await userModel.create(newUser)
+                console.log(result)
                 return done(null,result)
             } catch(e) {
                 return done ('error de registro' + e)
