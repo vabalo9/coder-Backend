@@ -10,7 +10,6 @@ const userSchema = new mongoose.Schema({
     thumbail:{type:String, require:true},
     code:{type:String, require:true},
     stock:{type:Number, require:true},
-    id:{type:Number, require:true},
     status:Boolean
 })
 

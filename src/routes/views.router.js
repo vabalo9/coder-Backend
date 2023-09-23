@@ -1,6 +1,6 @@
 import { Router } from "express";
-import managerModel from '../DAO/models/productsModels.js'
-import cartsModel from '../DAO/models/cartsModel.js'
+import { productsService } from "../repositories/index.js"
+import { cartsService } from "../repositories/index.js"
 
 const router = Router()
 
@@ -51,7 +51,6 @@ router.get('/fail', auth, (req, res) => {
 
 router.get('/profile', auth, (req, res) => {
     const user = req.session.user
-    console.log(req.session.user)
 
 
     res.render('profile', user)
@@ -61,44 +60,56 @@ router.get('/', auth, (req, res) => {
     res.render('index', {})
 })
 
-router.get('/products', auth, async (req, res) => {
-    console.log('este es el usuario: '+req.user.cartId)
 
-    const page = parseInt(req.query?.page || 1)
-    const limit = parseInt(req.query.limit || 3)
-    let priceOrder = parseInt(req.query.price || 1)
+
+
+
+router.get('/products',  auth, async(req, res) => {
+    const products = await productsService.getProducts()
+    
+    const page = parseInt(req.query?.page || 1);
+    const limit = parseInt(req.query.limit || 3);
+    let priceOrder = parseInt(req.query.price || 1);
     let marca = req.query.marca || false;
-    let query = {}
 
-    if (marca) {
-        query.marca = marca
-    }
+    // Filtrar productos por marca si se proporciona
+    let filteredProducts = marca ? products.filter(p => p.marca === marca) : products;
+
+    // Ordenar productos por precio
+    filteredProducts.sort((a, b) => priceOrder * (a.price - b.price));
+
+    // Paginación
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
+
+    const hasPrevPage = startIndex > 0;
+    const hasNextPage = endIndex < filteredProducts.length;
+
+    const result = {
+        payload: paginatedProducts,
+        hasPrevPage,
+        hasNextPage,
+        prevLink: hasPrevPage ? `/products/?page=${page - 1}&limit=${limit}` : null,
+        nextLink: hasNextPage ? `/products/?page=${page + 1}&limit=${limit}` : null
+    };
     try {
-
-        let products = await managerModel.paginate(query, {
-            page,
-            limit,
-            lean: true, //pasar a formato json
-
-        })
-        products.prevLink = products.hasPrevPage ? `/products/?page=${products.prevPage}&limit=${limit}` : null
-        products.nextLink = products.hasNextPage ? `/products/?page=${products.nextPage}&limit=${limit}` : null
-         res.render('market', {
-            products,
-            cartId:req.user.cartId._id
-        } )
+        res.render('market', {
+            products: result,
+            cartId: req.user.cartId._id
+        });
     } catch (err) {
         res.json(err);
     }
 
-})
+});
+
 
 
 router.get('/home.handlebars', auth, async (req, res) => {
-    console.log(req.session.user.first_name)
-    const products = await managerModel.find().lean().exec();
+    const products = await productsService.getProducts()
     res.render('products', { 
-        products: products,
+        products,
         user: req.session.user 
     });
     
@@ -110,20 +121,22 @@ router.get('/form-products', auth, profile, async (req, res) => {
 })
 
 router.get('/realtimeproducts', auth, profile, async (req, res) => {
-    const products = await managerModel.find().lean().exec();
+    const products = await productsService.getProducts();
     res.render('realTimeProducts', { products })
 })
 
 router.post('/form-products', auth, async (req, res) => {
     const object = req.body
-    await managerModel.create({ title: object.title, id: object.id, description: object.description, price: object.price, thumbnail: object.thumbnail, code: object.code, stock: object.stock, status: true })
+    await productsService.create(object)
     res.redirect('/home.handlebars')
 })
 
-router.get('/carts', auth, async (req,res)=>{
-    let cartId = req.user.cartId
-    const busquedaCarrito = await cartsModel.findOne({ _id: cartId }).lean().exec();
-    //console.log(JSON.stringify(busquedaCarrito))
+
+
+
+router.get('/carts', auth, async (req, res) => {
+    let cartId = req.user.cartId;
+    const busquedaCarrito = await cartsService.getCart(cartId);
     if (busquedaCarrito.products.length == 0) return res.render('carritovacio', {})
         
     

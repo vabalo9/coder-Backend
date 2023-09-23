@@ -5,6 +5,9 @@ import {Server} from "socket.io"
 import handlebars from "express-handlebars"
 import mongoose from 'mongoose'
 import MongoStore from 'connect-mongo'
+import {config} from 'dotenv'
+
+config({path:'.env'})
 
 import __dirname from './utils.js'
 
@@ -32,7 +35,7 @@ app.set('view engine', 'handlebars')
 
 
 mongoose.set( 'strictQuery', false)
-const URL="mongodb+srv://valentinabalo9:jD7JbCE69VsdI6Gl@cluster0.nx3owjr.mongodb.net/?retryWrites=true&w=majority"
+const URL=process.env.URL
 const dbName='login-proyect'
 
 //config mongo session
@@ -44,9 +47,9 @@ app.use(session({
           useNewUrlParser:true,
           useUnifiedTopology:true
       },
-      ttl:100
+      ttl:+process.env.TTL
   }),
-  secret:'secret',
+  secret:process.env["SESSION-PASSWORD"],
   resave:true,
   saveUninitialized:true
 }))
@@ -65,9 +68,8 @@ app.use('/', viewsRouter)
 app.use('/api/products/', managerRouter)
 
 //rutas mongo
-app.use("/api/carts/", cartDB)
-app.use('/cartDB/', cartDB)
-app.use('/managerDB',managerDB )
+app.use("/api/carts/", cartDB) //funciona con persistencia
+app.use('/managerDB',managerDB ) //funciona con persistencia
 
 //chat
 app.use('/chat', chatRouter)
@@ -93,7 +95,7 @@ mongoose.connect(URL, {
 
 .then(()=>{
 console.log('db conectada')
-const httpServer= app.listen(8080, ()=>console.log("...listening"))
+const httpServer= app.listen(+process.env.PORT, ()=>console.log("...listening"))
 const io = new Server (httpServer)
 
 io.on('connection', async socket=>{

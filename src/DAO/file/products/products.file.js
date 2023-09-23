@@ -1,16 +1,17 @@
 import fs from "fs"
 
-class ProductManager {
-  constructor(path) {
-    this.path = path;
-    this.format = 'utf-8';
+class Products {
+  constructor(filename = 'products.json') {
+    this.filename = filename
+    if(!fs.existsSync(this.filename)) {
+        fs.writeFileSync(this.filename, '[]')
+    }
   }
 
-  async getProducts() {
+  async get() {
     try {
-      const data = await fs.promises.readFile(this.path, this.format);
-      const dataObj = JSON.parse(data);
-      return dataObj;
+      return fs.promises.readFile(this.filename, {encoding: 'utf-8'})
+      .then(r => JSON.parse(r))
     } catch (error) {
       console.log('No se encontraron productos');
       return [];
@@ -20,22 +21,20 @@ class ProductManager {
  
 
   async getProductById(IdBuscado) {
-    const products = await this.getProducts();
-    const productoBuscado = products.find((el) => el.id === IdBuscado);
-    if (productoBuscado !== undefined) {
+    const products = await this.get();
+    const productoBuscado = products.find((el) => el.id == IdBuscado);
+    if (productoBuscado != undefined) {
       return productoBuscado;
     } else {
       return {error: "El producto no existe"};
     }
   }
 
-  async addProduct(title, description, price, thumbnail, code, stock) {
-    const list = await this.getProducts();
-    let ID;
-    list.length === 0 ? ID = 1 : ID = list[list.length-1].id + 1;
-
-    const product = { title, id: ID, description, price, thumbnail, code, stock, status:true };
-    let codeDetector = list.find((el) => el.code === code);
+  async addProduct(newProduct) {
+    const products = await this.get();
+    const product = { title:newProduct.title, id:newProduct.id, description:newProduct.description, price:newProduct.price, thumbnail:newProduct.thumbnail, code:newProduct.code, stock:newProduct.stock, status:newProduct.status };
+    console.log(product)
+    let codeDetector = products.find((el) => el.code === product.code);
     let propiedadVacia = true;
 
     for (let propiedad in product) {
@@ -47,34 +46,35 @@ class ProductManager {
       }
     }
 
-    if (codeDetector !== undefined) {
+    if (codeDetector != undefined) {
       console.log('¡Error! El código ya se encuentra presente en otro producto.');
     }
 
     if (codeDetector === undefined || propiedadVacia === false) {
-      list.push(product);
-      await fs.promises.writeFile(this.path, JSON.stringify(list));
+      products.push(product);
+       fs.writeFileSync(this.filename, JSON.stringify(products))
+       return {updapteProduct:'succes', product}
     }
   }
 
   async updapteProduct(productoAEditar, NuevoPrecio, NuevoStock) {
-     let productos = await this.getProducts();
+     let productos = await this.get();
     let prueba= await productos.findIndex(el=>el.id==productoAEditar)
     if (prueba==-1) {
       return `No se encontro ningún producto con el id ${productoAEditar}`
     } else {
     productos[prueba]={
       title: productos[prueba].title, id: productos[prueba].id, descipcion: productos[prueba].description, price:NuevoPrecio, thumbnail:productos[prueba].thumbnail, code:productos[prueba].code , stock:NuevoStock}
-      await fs.promises.writeFile(this.path, JSON.stringify(productos));
+      fs.writeFileSync(this.filename, JSON.stringify(productos));
       return productos[prueba]
     }
   }
 
   async deleteProduct(procuctoAEliminar){
-    let productos = await this.getProducts();
+    let productos = await this.get();
     let evaluacion = productos.length
-    let prueba= await productos.filter(el=>el.id != procuctoAEliminar )
-    await fs.promises.writeFile(this.path, JSON.stringify(prueba));
+    let prueba= await productos.filter(el=>el.id != Number(procuctoAEliminar) )
+    await fs.promises.writeFile(this.filename, JSON.stringify(prueba));
     if (prueba.length < evaluacion) {
       return "Producto eliminado correctamente"
     }else{
@@ -84,5 +84,5 @@ class ProductManager {
 }
 
 
-export default ProductManager
+export default Products
 

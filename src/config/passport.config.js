@@ -3,33 +3,33 @@ import local from 'passport-local'
 import userModel from "../DAO/models/user.model.js";
 import GitHubStrategy from 'passport-github2'
 import { createHash, isValidPassword } from "../utils.js";
-import cartsModel from '../DAO/models/cartsModel.js'
+import { cartsService } from "../repositories/index.js"
+import {config} from 'dotenv'
+
+config({path:'.env'})
+
 
 const  newCart  = async()=> {
-const carts = await cartsModel.find().lean().exec()
+    const carts = await cartsService.getCarts()
   let ID
   carts.length === 0 ? ID = 1 : ID = carts[carts.length - 1].id + 1;
   const cart = { id: ID, products: [] }
 
-  const cartGenerated = new cartsModel(cart)
-  await cartGenerated.save()
+  const cartGenerated = await cartsService.createCart(cart)
+  
 
   return (cartGenerated);
 }
 
-// App ID: 378060
 
-// Client ID: Iv1.887921c41658fbeb
-
-//secret:4dbd6ff50d269d62c9b80932eb3069e851fd719c
 
 const LocalStrategy = local.Strategy
 
 const initializePassport =()=>{
     passport.use('github', new GitHubStrategy(
         {
-            clientID: 'Iv1.887921c41658fbeb',
-            clientSecret: '4dbd6ff50d269d62c9b80932eb3069e851fd719c',
+            clientID: process.env.GITHUB_CLIENT,
+            clientSecret: process.env.GITHUB_SECRET,
             callbackURL: 'http://127.0.0.1:8080/api/session/githubcallback'
         },
         async (accesToken, refreshToken, profile,done)=>{
@@ -80,7 +80,6 @@ const initializePassport =()=>{
                         cartId:cartIdResult._id
                 }
                 const result = await userModel.create(newUser)
-                console.log(result)
                 return done(null,result)
             } catch(e) {
                 return done ('error de registro' + e)
