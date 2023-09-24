@@ -44,6 +44,11 @@ function profile(req,res,next) {
     res.redirect('/fail')
 }
 
+function user(req,res,next) {
+    if(req.session.user.rol == "user") return next()
+    res.redirect('/fail')
+}
+
 router.get('/fail', auth, (req, res) => {
 
     res.render('fail', {})
@@ -56,6 +61,10 @@ router.get('/profile', auth, (req, res) => {
     res.render('profile', user)
 })
 
+router.get('/chat', auth, user, (req,res)=>{
+    res.render('chat', {})
+})
+
 router.get('/', auth, (req, res) => {
     res.render('index', {})
 })
@@ -64,7 +73,7 @@ router.get('/', auth, (req, res) => {
 
 
 
-router.get('/products',  auth, async(req, res) => {
+router.get('/products',  auth, user, async(req, res) => {
     const products = await productsService.getProducts()
     
     const page = parseInt(req.query?.page || 1);
@@ -106,7 +115,7 @@ router.get('/products',  auth, async(req, res) => {
 
 
 
-router.get('/home.handlebars', auth, async (req, res) => {
+router.get('/home.handlebars', auth, profile, async (req, res) => {
     const products = await productsService.getProducts()
     res.render('products', { 
         products,
@@ -125,7 +134,7 @@ router.get('/realtimeproducts', auth, profile, async (req, res) => {
     res.render('realTimeProducts', { products })
 })
 
-router.post('/form-products', auth, async (req, res) => {
+router.post('/form-products', auth,  async (req, res) => {
     const object = req.body
     await productsService.create(object)
     res.redirect('/home.handlebars')
@@ -134,7 +143,7 @@ router.post('/form-products', auth, async (req, res) => {
 
 
 
-router.get('/carts', auth, async (req, res) => {
+router.get('/carts', auth, user, async (req, res) => {
     let cartId = req.user.cartId;
     const busquedaCarrito = await cartsService.getCart(cartId);
     if (busquedaCarrito.products.length == 0) return res.render('carritovacio', {})

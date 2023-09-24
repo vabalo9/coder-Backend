@@ -17,7 +17,6 @@ import cartDB from "./routes/DB-Routes/cartDB.router.js"
 import managerDB from "./routes/DB-Routes/managerDB.router.js"
 import viewsRouter from "./routes/views.router.js"
 import managerModel from './DAO/models/productsModels.js'
-import chatRouter from './routes/Chat/chat.router.js'
 import chatModel from './DAO/models/mesaggesModel.js'
 import sessionRouter from './routes/session.router.js'
 import initializePassport from "./config/passport.config.js"
@@ -71,8 +70,7 @@ app.use('/api/products/', managerRouter)
 app.use("/api/carts/", cartDB) //funciona con persistencia
 app.use('/managerDB',managerDB ) //funciona con persistencia
 
-//chat
-app.use('/chat', chatRouter)
+
 
 //sesion
 app.use('/api/session', sessionRouter)

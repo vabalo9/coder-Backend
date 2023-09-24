@@ -3,20 +3,20 @@ import local from 'passport-local'
 import userModel from "../DAO/models/user.model.js";
 import GitHubStrategy from 'passport-github2'
 import { createHash, isValidPassword } from "../utils.js";
-import { cartsService } from "../repositories/index.js"
+import cartsModel from '../DAO/mongo/carts/cartsModel.js'
 import {config} from 'dotenv'
 
 config({path:'.env'})
 
 
 const  newCart  = async()=> {
-    const carts = await cartsService.getCarts()
+const carts = await cartsModel.find().lean().exec()
   let ID
   carts.length === 0 ? ID = 1 : ID = carts[carts.length - 1].id + 1;
   const cart = { id: ID, products: [] }
 
-  const cartGenerated = await cartsService.createCart(cart)
-  
+  const cartGenerated = new cartsModel(cart)
+  await cartGenerated.save()
 
   return (cartGenerated);
 }

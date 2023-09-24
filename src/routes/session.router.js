@@ -76,8 +76,10 @@ router.post('/current', (req, res, next) => {
             return res.status(401).json({ error: info.message || "Authentication failed." });
         }
 
+         console.log(user)
+            
         
-        return res.json(user);
+        return res.json({name:user.first_name, last_name:user.last_name,email:user.email,rol:user.rol});
 
     })(req, res, next);
 });
