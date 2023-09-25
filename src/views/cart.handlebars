@@ -1,5 +1,6 @@
 <div>
-    <h1 class='titulo-carrito'>Tus productos</h1>
+    <h1 class='titulo-carrito'>Productos del carrito</h1>
+    <input type="hidden" id="cartId" value="{{busquedaCarrito._id}}">
 
 
 
@@ -17,7 +18,7 @@
             </div>
         </div>
         <h1 class='color titulo-producto-carrito'>{{{_id.title}}}</h1>
-        <img className='imagen-carrito' src='' />
+        <img class='imagen-carrito' src='' />
     </div>
     {{/each}}
 
@@ -26,7 +27,7 @@
     </div>
 
     <div class="btns-sesion">
-        <button class="boton-finalizador" >Finalizar compra</button>
+        <button class="boton-finalizador" id="purchase" >Finalizar compra</button>
         
 
 
@@ -34,3 +35,4 @@
 
 </div>
 
+<script src="/static/js/purchase.js"></script>

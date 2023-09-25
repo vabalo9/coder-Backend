@@ -1,7 +1,7 @@
 let botones = document.getElementsByClassName("btn-primary")
 let enlace = document.getElementById('enlace');
 const cartId= document.getElementById('cartId').value
-console.log(cartId)
+const purchase = document.getElementById('purchase')
     for (const boton of botones) {
      boton.addEventListener("click", (e)=>{
       fetch(`http://127.0.0.1:8080/api/carts/${cartId}/product/${e.target.id}`, {
@@ -15,7 +15,7 @@ console.log(cartId)
      })
     }
 
-   
+ 
 
 
 

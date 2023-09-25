@@ -1,6 +1,5 @@
 import { Router } from "express";
 import passport from "passport";
-import {createHash, isValidPassword} from '../utils.js'
 
 const router = Router()
 
@@ -46,9 +45,7 @@ router.get(
     '/githubcallback',
     passport.authenticate('github', { failureRedirect: '/'}),
     async(req, res) => {
-        console.log('Callback: ', req.user)
         req.session.user = req.user
-        console.log('console: '+req.session)
         res.redirect('/profile')
     }
 )
@@ -76,7 +73,6 @@ router.post('/current', (req, res, next) => {
             return res.status(401).json({ error: info.message || "Authentication failed." });
         }
 
-         console.log(user)
             
         
         return res.json({name:user.first_name, last_name:user.last_name,email:user.email,rol:user.rol});

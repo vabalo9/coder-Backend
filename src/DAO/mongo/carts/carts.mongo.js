@@ -20,7 +20,6 @@ export default class Carts {
 
      getId = async (_id) => {
         const cart =await cartsModel.findOne({ _id }).lean()
-        console.log(cart)
         return cart
      }
 

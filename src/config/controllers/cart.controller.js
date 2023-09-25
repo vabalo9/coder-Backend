@@ -38,9 +38,9 @@ export const agregateProduct = async (req, res) => {
 
 export const deleteProduct = async (req, res) => {
   let cartId = req.params.cid
-  let objectId = req.params.pid
+  
 
-  const deleteProduct = await cartsService.deleteProduct(cartId, objectId)
+  const deleteProduct = await cartsService.deleteProduct(cartId, 5)
   res.send(deleteProduct)
 }
 

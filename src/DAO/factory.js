@@ -3,6 +3,7 @@ import { persistence } from '../config/config.js'
 
 export let Carts
 export let Products
+export let Tickets
 
 switch (persistence) {
     case 'MEMORY':
@@ -22,9 +23,11 @@ switch (persistence) {
     case 'MONGO':
         console.log('persistence with mongo')
         const { default: CartsMongo } = await import('./mongo/carts/carts.mongo.js')
-        Carts = CartsMongo
+        Carts = CartsMongo;
         const { default: ProductsMongo } = await import('./mongo/products/products.mongo.js')
-        Products = ProductsMongo
+        Products = ProductsMongo;
+        const { default: TicketsMongo } = await import('./mongo/tickets/tickets.mongo.js')
+        Tickets = TicketsMongo;
         break;
     default:
         throw new Error('not persistence is configured')

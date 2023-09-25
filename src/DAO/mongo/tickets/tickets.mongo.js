@@ -13,15 +13,25 @@ export default class Ticket {
     }
 
     getId = async (_id) => {
-        const tickets =await cartsModel.findOne({ _id }).lean()
-        return tickets
+        const ticket =await ticketsModel.findOne({ _id }).lean()
+        return ticket
      }
 
 
-     create = async cart => {
-        const cartGenerated = new cartsModel(cart)
-        await cartGenerated.save()
-        return cartGenerated
+     create = async ticket => {
+        const ticketGenerated = new ticketsModel(ticket)
+        await ticketGenerated.save()
+        return ticketGenerated
+    }
+
+    async addTicket(ticket) {
+        try {
+            const newTicket = await ticketsModel.create({ amount: ticket.quantity, purchaser:ticket.purchaser})
+            return ({ estado: "elemento añadido", newTicket })
+        } catch (err) {
+            console.error(err)
+            return ({ status: 'something is broken', error: err });
+        }
     }
 
      

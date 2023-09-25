@@ -1,6 +1,7 @@
 import { Router } from "express";
 import userModel from "../../DAO/models/user.model.js";
 import {getCarts,createCart,getCartId,agregateProduct,deleteProduct,deleteCart} from '../../config/controllers/cart.controller.js'
+import { PurchaseCompleted } from "../../config/controllers/purchase.controller.js";
 
 const router = Router()
 
@@ -17,6 +18,8 @@ router.get("/:cid", getCartId)
 
 //para agregar una unidad mas por la ruta
 router.post("/:cid/product/:pid", agregateProduct)
+
+router.post("/:cid/purchase", PurchaseCompleted)
 
 router.delete("/:cid/products/:pid", deleteProduct)
 
