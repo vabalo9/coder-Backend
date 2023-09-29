@@ -7,15 +7,8 @@ export const getCarts = async (req, res) => {
 }
 
 
-//esto hay que corregirlo
 export const createCart = async (req, res) => {
-  const carts = await cartsService.getCarts()
-
-  let ID
-  carts.length === 0 ? ID = 1 : ID = carts[carts.length - 1].id + 1;
-  const cart = { id: ID, products: [] }
-
-  const cartGenerated = await cartsService.createCart(cart)
+  const cartGenerated = await cartsService.createCart()
   res.send(cartGenerated);
 }
 

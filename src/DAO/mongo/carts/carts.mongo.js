@@ -13,8 +13,7 @@ export default class Carts {
     }
 
      create = async cart => {
-        const cartGenerated = new cartsModel(cart)
-        await cartGenerated.save()
+        const cartGenerated = await new cartsModel(cart).save()
         return cartGenerated
     }
 

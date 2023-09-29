@@ -2,6 +2,7 @@ import { Router } from "express";
 import passport from "passport";
 
 const router = Router()
+export let userMail
 
 
 router.post('/login', (req, res, next) => {
@@ -19,6 +20,7 @@ router.post('/login', (req, res, next) => {
                 return next(err);
             }
             req.session.user = user;
+            userMail = req.session.user
             return res.redirect('/home.handlebars');
         });
     })(req, res, next);
@@ -46,6 +48,7 @@ router.get(
     passport.authenticate('github', { failureRedirect: '/'}),
     async(req, res) => {
         req.session.user = req.user
+         userMail = req.session.user
         res.redirect('/profile')
     }
 )

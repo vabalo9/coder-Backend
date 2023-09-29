@@ -14,7 +14,7 @@ router.get("/products", async (req, res) => {
   let productsList = await productsService.getProducts()
   // Extraer parámetros o usar valores por defecto
   const page = parseInt(req.query?.page || 1);
-  const limit = parseInt(req.query.limit || 3);
+  const limit = parseInt(req.query.limit || 10);
   const priceOrder = parseInt(req.query.price || 1);
   const marca = req.query.marca || false;
 

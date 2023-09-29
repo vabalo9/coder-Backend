@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { productsService } from "../repositories/index.js"
-import { cartsService } from "../repositories/index.js"
+import { cartsService, ticketsService, productsService } from "../repositories/index.js"
+import userModel from "../DAO/models/user.model.js";
 
 const router = Router()
 
 router.get('/check', (req, res) => {
-    if(req.session?.user) {
+    if (req.session?.user) {
         res.redirect('/home.handlebars')
     }
 
@@ -13,7 +13,7 @@ router.get('/check', (req, res) => {
 })
 
 router.get('/register', (req, res) => {
-    if(req.session?.user) {
+    if (req.session?.user) {
         res.redirect('/home.handlebars')
     }
 
@@ -35,17 +35,17 @@ router.get('/logout', (req, res) => {
 
 
 function auth(req, res, next) {
-    if(req.session?.user) return next()
+    if (req.session?.user) return next()
     res.redirect('/check')
 }
 
-function profile(req,res,next) {
-    if(req.session.user.rol == "admin") return next()
+function profile(req, res, next) {
+    if (req.session.user.rol == "admin") return next()
     res.redirect('/fail')
 }
 
-function user(req,res,next) {
-    if(req.session.user.rol == "user") return next()
+function user(req, res, next) {
+    if (req.session.user.rol == "user") return next()
     res.redirect('/fail')
 }
 
@@ -61,7 +61,7 @@ router.get('/profile', auth, (req, res) => {
     res.render('profile', user)
 })
 
-router.get('/chat', auth, user, (req,res)=>{
+router.get('/chat', auth, user, (req, res) => {
     res.render('chat', {})
 })
 
@@ -73,9 +73,9 @@ router.get('/', auth, (req, res) => {
 
 
 
-router.get('/products',  auth, user, async(req, res) => {
+router.get('/products', auth, user, async (req, res) => {
     const products = await productsService.getProducts()
-    
+
     const page = parseInt(req.query?.page || 1);
     const limit = parseInt(req.query.limit || 3);
     let priceOrder = parseInt(req.query.price || 1);
@@ -117,11 +117,11 @@ router.get('/products',  auth, user, async(req, res) => {
 
 router.get('/home.handlebars', auth, profile, async (req, res) => {
     const products = await productsService.getProducts()
-    res.render('products', { 
+    res.render('products', {
         products,
-        user: req.session.user 
+        user: req.session.user
     });
-    
+
 })
 
 
@@ -134,7 +134,7 @@ router.get('/realtimeproducts', auth, profile, async (req, res) => {
     res.render('realTimeProducts', { products })
 })
 
-router.post('/form-products', auth,  async (req, res) => {
+router.post('/form-products', auth, async (req, res) => {
     const object = req.body
     await productsService.create(object)
     res.redirect('/home.handlebars')
@@ -147,12 +147,28 @@ router.get('/carts', auth, user, async (req, res) => {
     let cartId = req.user.cartId;
     const busquedaCarrito = await cartsService.getCart(cartId);
     if (busquedaCarrito.products.length == 0) return res.render('carritovacio', {})
-        
-    
-     res.render('cart', {busquedaCarrito})
+
+
+    res.render('cart', { busquedaCarrito })
 })
 
-router.get('/vacio', auth, (req,res)=>{
+
+router.get("/ticket/:cid", async (req, res) => {
+    const id = req.params.cid;
+    let cartId = req.user.cartId._id;
+    const newId = await cartsService.createCart();
+    
+     const prueba=await userModel.updateOne({ cartId:cartId }, { $set: { cartId: newId }});
+    
+    // console.log(prueba)
+    const ticket = await ticketsService.getTicket({ _id: id });
+
+
+    res.render('ticket', { ticket })
+});
+
+
+router.get('/vacio', auth, (req, res) => {
     res.render('carritovacio', {})
 })
 
