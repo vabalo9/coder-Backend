@@ -147,9 +147,11 @@ router.get('/carts', auth, user, async (req, res) => {
     let cartId = req.user.cartId;
     const busquedaCarrito = await cartsService.getCart(cartId);
     if (busquedaCarrito.products.length == 0) return res.render('carritovacio', {})
+    const totalQuantity = busquedaCarrito.products.reduce((acc, item) => acc + item.quantity, 0);
+    const totalCost = busquedaCarrito.products.reduce((acc, product) => acc + (product.quantity * product._id.price), 0);
 
+    res.render('cart', { busquedaCarrito, totalQuantity, totalCost})
 
-    res.render('cart', { busquedaCarrito })
 })
 
 
@@ -157,8 +159,13 @@ router.get("/ticket/:cid", async (req, res) => {
     const id = req.params.cid;
     let cartId = req.user.cartId._id;
     const newId = await cartsService.createCart();
+    try {
+        const prueba=await userModel.updateOne({ cartId:cartId }, { $set: { cartId: newId }});
+        
+    } catch (error) {
+       return res.redirect('/check')
+    }
     
-     const prueba=await userModel.updateOne({ cartId:cartId }, { $set: { cartId: newId }});
     
     // console.log(prueba)
     const ticket = await ticketsService.getTicket({ _id: id });

@@ -8,7 +8,15 @@ const purchase = document.getElementById('purchase')
     method: 'POST', 
 })
 .then(response => response.json()) 
-.then(data => console.log(data)) 
+.then(data => console.log(data),
+Swal.fire({
+  position: 'top-end',
+  icon: 'success',
+  title: 'Producto añadido al carrito',
+  showConfirmButton: false,
+  timer: 1500
+})
+) 
 .catch((error) => {
   console.error('Error:', error);
 });
