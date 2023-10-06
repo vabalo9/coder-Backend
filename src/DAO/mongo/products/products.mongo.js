@@ -7,11 +7,10 @@ export default class Products {
 
     }
 
-    get = async () => {
+    get = async (cantidad) => {
         try {
             const products = await managerModel.find().lean().exec()
             return products
-            const cantidad = req.query.limit
             if (cantidad) {
                 let elementosBuscados = await managerModel.find().limit(cantidad).lean().exec()
                 return (elementosBuscados)

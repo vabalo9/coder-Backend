@@ -20,7 +20,11 @@ import managerModel from './DAO/models/productsModels.js'
 import chatModel from './DAO/models/mesaggesModel.js'
 import sessionRouter from './routes/session.router.js'
 import initializePassport from "./config/passport.config.js"
+import mocking from './routes/mocking.js'
 import passport from "passport"
+import EErrors from "./services/errors/enums.js"
+
+import errorHandler from './middlewares/errors.js'
 
 const app = express();
 app.use(express.urlencoded({extended:true}))
@@ -69,14 +73,14 @@ app.use('/api/products/', managerRouter)
 //rutas mongo
 app.use("/api/carts/", cartDB) //funciona con persistencia
 app.use('/managerDB',managerDB ) //funciona con persistencia
-
+app.use('/mockingproducts', mocking)
 
 
 //sesion
 app.use('/api/session', sessionRouter)
 
 
-
+app.use(errorHandler)
 
 const saveMessages = async (data) => {
   const messageDoc = await chatModel.findOne();

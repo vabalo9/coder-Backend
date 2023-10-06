@@ -1,12 +1,15 @@
 import { Router } from "express";
 import passport from "passport";
+import CustomError from "../services/errors/custom_errors.js";
+import { generateUsedErrorInfo } from "../services/errors/info.js";
+import EErrors from "../services/errors/enums.js";
 
 const router = Router()
 export let userMail
 
 
 router.post('/login', (req, res, next) => {
-    passport.authenticate('login', (err, user) => {
+    passport.authenticate('login', (err, user) => { 
         if (err) {
             // Handle the error if needed
             return next(err);
@@ -60,7 +63,14 @@ router.post('/current', (req, res, next) => {
     const password = req.headers.password;
 
     if (!email || !password) {
-        return res.status(400).json({ error: "Ingrese email y contraseña." });
+        //return res.status(400).json({ error: "Ingrese email y contraseña." });
+        CustomError.createError({
+            name:'invalid credentials',
+            cause:generateUsedErrorInfo(),
+            mensagge:'error trying to login', 
+            code:EErrors.INVALID_TYPE_ERROR
+
+        })
     }
 
     // Adjuntamos el email y la contraseña al body para que passport pueda usarlos

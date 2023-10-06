@@ -2,7 +2,6 @@ import { Router } from "express";
 import userModel from "../../DAO/models/user.model.js";
 import {getCarts,createCart,getCartId,agregateProduct,deleteProduct,deleteCart} from '../../config/controllers/cart.controller.js'
 import { PurchaseCompleted} from "../../config/controllers/purchase.controller.js";
-import cartsModel from "../../DAO/mongo/carts/cartsModel.js";
 const router = Router()
 
 router.get('/users', async (req, res) => {
