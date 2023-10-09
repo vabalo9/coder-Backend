@@ -5,6 +5,10 @@ const __dirname = dirname(__filename)
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { faker } from '@faker-js/faker'
+import winston from 'winston'
+import {config} from 'dotenv'
+
+config({path:'.env'})
 
 export const createHash = (password) => {
     return bcrypt.hashSync(password, bcrypt.genSaltSync(10))
@@ -32,6 +36,47 @@ export const generatedProduct =()=>{
         stock: faker.number.int(123), 
         status:true   // Genera un número aleatorio hasta 100 para el stock. Ajusta según tus necesidades.
     };  
+}
+
+
+const customLevelOptions = {
+    levels: {
+        debug: 0,
+        http: 1,
+        info: 2,
+        warning: 3,
+        error: 4,
+        fatal:5
+
+    }
+}
+
+
+
+const isProd = process.env.APP_ENV
+    
+export const logger = winston.createLogger({
+    levels: customLevelOptions.levels,
+    transports: [
+        new winston.transports.Console({
+            level: isProd ? 'info' : 'debug',
+            format: winston.format.combine(winston.format.simple())
+        }),
+        new winston.transports.File({
+            filename: './errors.log',
+            level: 'error',
+            format: winston.format.simple()
+        })
+    ]
+})
+
+
+export const addLogger = (req, res, next) => {
+    req.logger = logger
+    
+    req.logger.info(`${req.method} on ${req.url} - ${new Date().toLocaleTimeString()}`)
+
+    next()
 }
 
 export default __dirname

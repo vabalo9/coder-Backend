@@ -21,8 +21,10 @@ import chatModel from './DAO/models/mesaggesModel.js'
 import sessionRouter from './routes/session.router.js'
 import initializePassport from "./config/passport.config.js"
 import mocking from './routes/mocking.js'
+import loggertest from './routes/logger.js'
 import passport from "passport"
 import EErrors from "./services/errors/enums.js"
+import {logger} from './utils.js'
 
 import errorHandler from './middlewares/errors.js'
 
@@ -74,6 +76,7 @@ app.use('/api/products/', managerRouter)
 app.use("/api/carts/", cartDB) //funciona con persistencia
 app.use('/managerDB',managerDB ) //funciona con persistencia
 app.use('/mockingproducts', mocking)
+app.use('/loggertest', loggertest)
 
 
 //sesion
@@ -96,8 +99,8 @@ mongoose.connect(URL, {
 })
 
 .then(()=>{
-console.log('db conectada')
-const httpServer= app.listen(+process.env.PORT, ()=>console.log("...listening"))
+logger.info('db conectada')
+const httpServer= app.listen(+process.env.PORT, ()=>logger.info("...listening"))
 const io = new Server (httpServer)
 
 io.on('connection', async socket=>{
@@ -112,17 +115,17 @@ io.on('connection', async socket=>{
 })
 
   io.on('connection', socket=>{
-    socket.on('new', name=>console.log(`${name} se acaba de conectar`))
+    socket.on('new', name=>logger.info(`${name} se acaba de conectar`))
     socket.on('mesagge', async data=>{
        io.emit('logs', await saveMessages(data))
     })
     })
 
-httpServer.on('error', e=>console.error(e)) 
+httpServer.on('error', e=>logger.error(e)) 
 
 })
 .catch(e=>{
-    console.log("No se pudo conectar a la base de datos")
+    logger.fatal("No se pudo conectar a la base de datos")
 })
 
 

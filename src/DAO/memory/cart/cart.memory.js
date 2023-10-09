@@ -24,7 +24,6 @@ export default class Carts {
         const carts = await this.get()
         const busquedaCarrito = await carts.find((el)=>el.id==cartId)
         const busquedaProducto = busquedaCarrito.products.findIndex((el) => el.id == id);
-        console.log(busquedaProducto)
         if (busquedaProducto == -1) {
             busquedaCarrito.products.push({ id: objectId, quantity: 1 })
         } else {

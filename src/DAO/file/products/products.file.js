@@ -1,4 +1,5 @@
 import fs from "fs"
+import { logger } from "./../../../utils.js"
 
 class Products {
   constructor(filename = 'products.json') {
@@ -13,7 +14,7 @@ class Products {
       return fs.promises.readFile(this.filename, {encoding: 'utf-8'})
       .then(r => JSON.parse(r))
     } catch (error) {
-      console.log('No se encontraron productos');
+      logger.info('No se encontraron productos');
       return [];
     }
   }
@@ -33,21 +34,20 @@ class Products {
   async addProduct(newProduct) {
     const products = await this.get();
     const product = { title:newProduct.title, id:newProduct.id, description:newProduct.description, price:newProduct.price, thumbnail:newProduct.thumbnail, code:newProduct.code, stock:newProduct.stock, status:newProduct.status };
-    console.log(product)
     let codeDetector = products.find((el) => el.code === product.code);
     let propiedadVacia = true;
 
     for (let propiedad in product) {
       if (product.hasOwnProperty(propiedad)) {
         if (product[propiedad] === null || product[propiedad] === undefined || product[propiedad] === '') {
-          console.log(`El producto ${product.title} no tiene todos los campos completos. Por favor, ingresa todos los campos correctamente para añadirlo a la lista.`);
+         logger.info(`El producto ${product.title} no tiene todos los campos completos. Por favor, ingresa todos los campos correctamente para añadirlo a la lista.`);
           return (propiedadVacia = false);
         }
       }
     }
 
     if (codeDetector != undefined) {
-      console.log('¡Error! El código ya se encuentra presente en otro producto.');
+     logger.info('¡Error! El código ya se encuentra presente en otro producto.');
     }
 
     if (codeDetector === undefined || propiedadVacia === false) {

@@ -32,7 +32,6 @@ export default class Carts {
         const carts = await this.get()
         const busquedaCarrito = await carts.find((el)=>el.id==cartId)
         const busquedaProducto = busquedaCarrito.products.findIndex((el) => el.id == objectId);
-        console.log(busquedaProducto)
         if (busquedaProducto == -1) {
             busquedaCarrito.products.push({ id: objectId, quantity: 1 })
         } else {
@@ -43,7 +42,6 @@ export default class Carts {
         }
         fs.writeFileSync(this.filename, JSON.stringify(carts))
 
-        console.log('resultado'+await carts.find((el)=>el.id==cartId))
         return (await carts.find((el)=>el.id==cartId))
     }
 

@@ -167,7 +167,6 @@ router.get("/ticket/:cid", async (req, res) => {
     }
     
     
-    // console.log(prueba)
     const ticket = await ticketsService.getTicket({ _id: id });
 
 
