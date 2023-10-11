@@ -2,7 +2,7 @@ import passport from "passport";
 import local from 'passport-local'
 import userModel from "../DAO/models/user.model.js";
 import GitHubStrategy from 'passport-github2'
-import { createHash, isValidPassword } from "../utils.js";
+import { createHash, isValidPassword, logger } from "../utils.js";
 import cartsModel from '../DAO/mongo/carts/cartsModel.js'
 import {config} from 'dotenv'
 
@@ -38,7 +38,7 @@ const initializePassport =()=>{
             try{
                 const user = await userModel.findOne({email})
                 if(user){
-                    console.log('user already exist' + email)
+                    logger.info('user already exist' + email)
                     return done(null,user)
                 }
 
@@ -67,7 +67,7 @@ const initializePassport =()=>{
             try{
                 const user = await userModel.findOne({email:username})
                 if (user) {
-                    console.log('este usuario ya existe')
+                    logger.info('este usuario ya existe')
                     return done(null,false)
                 }
                 const cartIdResult = await newCart();
@@ -95,12 +95,12 @@ const initializePassport =()=>{
             try {
             const user = await userModel.findOne({email:username}).lean().exec()
             if (!user) {
-                console.log('el usuario no existe')
+                logger.info('el usuario no existe')
                 return done(null, false)
             }
 
             if (!isValidPassword(user,password)) {
-                console.log('contraseña invalida')
+                logger.info('contraseña invalida')
                 return done(null,false)
             }
             return done(null,user)

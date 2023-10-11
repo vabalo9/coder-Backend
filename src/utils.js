@@ -41,16 +41,15 @@ export const generatedProduct =()=>{
 
 const customLevelOptions = {
     levels: {
-        debug: 0,
-        http: 1,
-        info: 2,
-        warning: 3,
-        error: 4,
-        fatal:5
+        debug: 5,
+        http: 4,
+        info: 3,
+        warning: 2,
+        error: 1,
+        fatal:0
 
     }
 }
-
 
 
 const isProd = process.env.APP_ENV
@@ -60,12 +59,12 @@ export const logger = winston.createLogger({
     transports: [
         new winston.transports.Console({
             level: isProd ? 'info' : 'debug',
-            format: winston.format.combine(winston.format.simple())
+            //format: winston.format.combine(winston.format.simple())
         }),
         new winston.transports.File({
             filename: './errors.log',
             level: 'error',
-            format: winston.format.simple()
+            //format: winston.format.simple()
         })
     ]
 })
