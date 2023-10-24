@@ -1,0 +1,186 @@
+openapi: 3.0.0
+info:
+  version: "1.0.0"
+  title: "API de Productos y Carritos"
+  description: "API para la gestión de productos y carritos de compras."
+
+paths:
+  /api/products/products:
+    get:
+      summary: "Obtiene una lista de productos"
+      parameters:
+        - name: page
+          in: query
+          description: Número de página para paginación.
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: Límite de productos por página.
+          schema:
+            type: integer
+            default: 10
+        - name: price
+          in: query
+          description: Orden de precio.
+          schema:
+            type: integer
+            default: 1
+        - name: marca
+          in: query
+          description: Filtrar productos por marca.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Lista de productos paginados."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  payload:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+      # Aquí pueden continuar las demás operaciones (post, put, delete) para productos si las tuvieras
+
+  /carts:
+    get:
+      summary: "Obtiene una lista de carritos"
+      responses:
+        '200':
+          description: "Lista de carritos obtenida con éxito."
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cart'
+    
+    post:
+      summary: "Crea un nuevo carrito"
+      responses:
+        '200':
+          description: "Carrito creado con éxito."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+
+  /carts/{cid}:
+    get:
+      summary: "Obtiene un carrito específico por ID"
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: ID del carrito.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Carrito obtenido con éxito."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+    delete:
+      summary: "Elimina un carrito específico por ID"
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: ID del carrito.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Carrito eliminado con éxito."
+
+  /carts/{cid}/product/{pid}:
+    post:
+      summary: "Agrega un producto al carrito"
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: ID del carrito.
+          schema:
+            type: string
+        - name: pid
+          in: path
+          required: true
+          description: ID del producto.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Producto agregado al carrito con éxito."
+
+  /carts/{cid}/purchase:
+    post:
+      summary: "Completa la compra del carrito"
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: ID del carrito.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Compra completada con éxito."
+
+  /carts/{cid}/products/{pid}:
+    delete:
+      summary: "Elimina un producto del carrito"
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: ID del carrito.
+          schema:
+            type: string
+        - name: pid
+          in: path
+          required: true
+          description: ID del producto.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Producto eliminado del carrito con éxito."
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: ID autogenerado por MongoDB.
+        name:
+          type: string
+          description: Modelo del producto.
+        description:
+          type: string
+          description: Descripción de utilidad del producto.
+        price:
+          type: number
+          description: Valor del producto.
+        code:
+          type: string
+          description: Código interno creado por el usuario que sube el producto.
+        stock:
+          type: number
+          description: Cantidad de unidades disponibles para la compra.
+        status:
+          type: boolean
+          description: Si el producto está o no autorizado para la venta.
+
+    Cart:
+      type: object
+      description: es un array con objectsId donde despues se realiza un populate de products
+

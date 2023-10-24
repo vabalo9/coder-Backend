@@ -6,6 +6,8 @@ import handlebars from "express-handlebars"
 import mongoose from 'mongoose'
 import MongoStore from 'connect-mongo'
 import {config} from 'dotenv'
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUiExpress from 'swagger-ui-express';
 
 config({path:'.env'})
 
@@ -26,6 +28,8 @@ import passport from "passport"
 import EErrors from "./services/errors/enums.js"
 import {logger} from './utils.js'
 
+
+
 import errorHandler from './middlewares/errors.js'
 
 const app = express();
@@ -37,7 +41,20 @@ app.engine('handlebars', handlebars.engine())
 app.set('views', __dirname + '/views')
 app.set('view engine', 'handlebars')
 
+const swagerOptions = {
+  definition:{
+    openapi:'3.0.1',
+    info:{
+      tile:'documentación proyecto backend Coderhouse',
+      description:'documentacion modulo productos y carrito'
+    }
+  },
+  apis:[`${__dirname}/docs/**/*.yaml`]
+}
 
+const specs= swaggerJSDoc(swagerOptions)
+console.log(specs)
+app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 
 mongoose.set( 'strictQuery', false)
 const URL=process.env.URL
@@ -84,6 +101,8 @@ app.use('/api/session', sessionRouter)
 
 
 app.use(errorHandler)
+
+
 
 const saveMessages = async (data) => {
   const messageDoc = await chatModel.findOne();
